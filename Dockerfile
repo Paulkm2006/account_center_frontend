@@ -1,7 +1,7 @@
 FROM alpine:latest as build
 WORKDIR /app
 
-RUN apk update && apk add curl git unzip xz zip mesa-gl && \
+RUN apk update && apk add curl git unzip xz zip mesa-gl bash clang cmake pkgconf samurai gtk+3.0-dev && \
     wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.0-stable.tar.xz && \
 	tar xf flutter_linux_3.29.0-stable.tar.xz -C ~/ && \
 	rm flutter_linux_3.29.0-stable.tar.xz
