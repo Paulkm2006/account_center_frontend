@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
                 onPressed: () async {
                   final loginUrl = Uri.parse(
-                    'https://sso.bingyan.net/auth?client_id=e792e867-54d5-4d27-bdf9-9f1d2de43858&scope=openid%20profile%20phone%20email&response_type=code&redirect_uri=http://localhost:8080/callback',
+                    'https://sso.bingyan.net/auth?client_id=52c60313-2c31-48ba-be94-244976ef2683&scope=openid%20profile%20phone%20email&response_type=code&redirect_uri=https://account-center.bingyan.net/callback',
                   );
                   if (await canLaunchUrl(loginUrl)) {
                     await launchUrl(loginUrl);

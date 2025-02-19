@@ -11,7 +11,7 @@ import 'pages/callback_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
-const apiUrl = 'http://localhost:8080';
+const apiUrl = 'https://account-center-api.bingyan.net';
 
 void main() {
   usePathUrlStrategy();
@@ -77,6 +77,7 @@ class MainApp extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp.router(
+          title: 'Account Center',
           theme: themeProvider.theme,
           routerConfig: _router,
         );

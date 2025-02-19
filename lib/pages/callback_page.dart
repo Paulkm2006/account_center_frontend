@@ -1,4 +1,5 @@
 import 'package:account_center_frontend/services/auth_service.dart';
+import 'package:account_center_frontend/main.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +18,7 @@ class _CallbackPageState extends State<CallbackPage> {
   Future<void> exchangeCodeForToken(String code) async {
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8080/callback?code=$code'),
+        Uri.parse('$apiUrl/callback?code=$code'),
       ).timeout(
         const Duration(seconds: 10),
         onTimeout: () => throw Exception('Connection timed out'),
