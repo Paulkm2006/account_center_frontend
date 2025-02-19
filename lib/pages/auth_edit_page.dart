@@ -142,6 +142,7 @@ class _AuthEditPageState extends State<AuthEditPage> {
     if (_selectedAuthType == 'totp') {
       authData['algorithm'] = _selectedTotpAlgorithm;
       authData['key'] = _totpKeyController.text;
+      authData['digits'] = 6;
     } else if (_selectedAuthType == 'email') {
       authData['email'] = _emailController.text;
       authData['name'] = _nameController.text;
