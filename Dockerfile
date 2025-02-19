@@ -4,6 +4,7 @@ WORKDIR /app
 RUN apk update && apk add curl git unzip xz zip mesa-gl bash clang cmake pkgconf samurai gtk+3.0-dev && \
     wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.0-stable.tar.xz && \
 	tar xf flutter_linux_3.29.0-stable.tar.xz -C ~/ && \
+	git config --global --add safe.directory /root/flutter && \
 	rm flutter_linux_3.29.0-stable.tar.xz
 ENV PATH="$PATH:/root/flutter/bin"
 
