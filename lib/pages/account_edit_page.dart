@@ -154,100 +154,102 @@ class _AccountEditPageState extends State<AccountEditPage> {
   }
 
   Widget _buildAvatarField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Text('Avatar Type:'),
-            const SizedBox(width: 10),
-            SegmentedButton<bool>(
-              segments: const [
-                ButtonSegment(value: false, label: Text('URL')),
-                ButtonSegment(value: true, label: Text('Icon')),
-              ],
-              selected: {_isIconMode},
-              onSelectionChanged: (Set<bool> selection) {
-                setState(() {
-                  _avatarController.clear();
-                  _isValidImageUrl = false;
-                  _isIconMode = selection.first;
-                });
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        if (_isIconMode)
-          ListTile(
-            leading: Text(_avatarController.text.isEmpty ? 'Select an icon' : 'Selected:'),
-            title: _avatarController.text.isEmpty
-                ? const Icon(Icons.question_mark)
-                : Icon(defaultIcons[_avatarController.text]!.data),
-            trailing: IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () async {
-                final IconPickerIcon? result = await showIconPicker(context);
-                if (result != null) {
-                  setState(() {
-                    _avatarController.text = result.name;
-                    _isIconMode = true;
-                  });
-                }
-              },
-            ),
-          )
-        else
-          Column(
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(children: [
-                const Text("You can find most company logos at"),
-                TextButton(
-                  onPressed: () => launchUrlString("https://github.com/stratumauth/app/tree/master/icons"),
-                  child: const Text('Here'),
-                ),
-                const Text("Make sure to use github raw url."),
-              ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _avatarController,
-                      decoration: const InputDecoration(
-                        labelText: 'Avatar URL',
-                      ),
-                      onChanged: (value) {
-                        Future.delayed(const Duration(milliseconds: 500), () {
-                          if (value == _avatarController.text) {
-                            _testImageUrl(value);
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  if (!_isIconMode && _avatarController.text.isNotEmpty)
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: _isTestingImage
-                          ? const CircularProgressIndicator()
-                          : _isValidImageUrl
-                              ? Image.network(
-                                  _avatarController.text,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(Icons.error);
-                                  },
-                                )
-                              : const Icon(Icons.broken_image),
-                    ),
+              const Text('Avatar Type:'),
+              const SizedBox(width: 10),
+              SegmentedButton<bool>(
+                segments: const [
+                  ButtonSegment(value: false, label: Text('URL')),
+                  ButtonSegment(value: true, label: Text('Icon')),
                 ],
+                selected: {_isIconMode},
+                onSelectionChanged: (Set<bool> selection) {
+                  setState(() {
+                    _avatarController.clear();
+                    _isValidImageUrl = false;
+                    _isIconMode = selection.first;
+                  });
+                },
               ),
             ],
           ),
-      ],
+          const SizedBox(height: 10),
+          if (_isIconMode)
+            ListTile(
+              leading: Text(_avatarController.text.isEmpty ? 'Select an icon' : 'Selected:'),
+              title: _avatarController.text.isEmpty
+                  ? const Icon(Icons.question_mark)
+                  : Icon(defaultIcons[_avatarController.text]!.data),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () async {
+                  final IconPickerIcon? result = await showIconPicker(context);
+                  if (result != null) {
+                    setState(() {
+                      _avatarController.text = result.name;
+                      _isIconMode = true;
+                    });
+                  }
+                },
+              ),
+            )
+          else
+            Column(
+              children: [
+                Row(children: [
+                  const Text("You can find most company logos at"),
+                  TextButton(
+                    onPressed: () => launchUrlString("https://github.com/stratumauth/app/tree/master/icons"),
+                    child: const Text('Here'),
+                  ),
+                  const Text("Make sure to use github raw url."),
+                ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _avatarController,
+                        decoration: const InputDecoration(
+                          labelText: 'Avatar URL',
+                        ),
+                        onChanged: (value) {
+                          Future.delayed(const Duration(milliseconds: 500), () {
+                            if (value == _avatarController.text) {
+                              _testImageUrl(value);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    if (!_isIconMode && _avatarController.text.isNotEmpty)
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: _isTestingImage
+                            ? const CircularProgressIndicator()
+                            : _isValidImageUrl
+                                ? Image.network(
+                                    _avatarController.text,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.error);
+                                    },
+                                  )
+                                : const Icon(Icons.broken_image),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 

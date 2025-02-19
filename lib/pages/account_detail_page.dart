@@ -56,92 +56,28 @@ class AccountDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: account.getAvatar(),
-                      ),
-                      const SizedBox(width: 32),
-                      Text(
-                        account.name,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Spacer(),
-                      Row(
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth > 800) {
+                      // Wide layout - horizontal
+                      return Row(
                         children: [
-                          _buildUserItem("Creator", account.creator, context),
+                          _buildAccountBasicInfo(account),
                           const SizedBox(width: 32),
-                          _buildUserItem("Updater", account.updator, context),
+                          _buildUserAndActionPanel(account, context),
                         ],
-                      ),
-                      const SizedBox(width: 32),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).dividerColor),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text("Actions", style: TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 16),
-                              Column(children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    context.push('/account/${account.id}/edit');
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                  label: const Text('Edit'),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton.icon(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          WidgetStateProperty.all(Colors.red),
-                                    ),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: const Text('Delete Account'),
-                                        content: const Text('Are you sure you want to delete this account?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(context),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              await AccountService().deleteAccount(account.id);
-                                              if (context.mounted) {
-                                                context.go('/');
-                                              }
-                                            },
-                                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                  label: const Text('Delete'),
-                                ),
-                              ],)
-                            ],
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
+                      );
+                    } else {
+                      // Narrow layout - vertical
+                      return Column(
+                        children: [
+                          _buildAccountBasicInfo(account),
+                          const SizedBox(height: 16),
+                          _buildUserAndActionPanel(account, context),
+                        ],
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(height: 24),
                 Expanded(
@@ -187,6 +123,98 @@ class AccountDetailPage extends StatelessWidget {
     );
   }
   
+  Widget _buildAccountBasicInfo(Account account) {
+    return Row(
+      children: [
+        SizedBox(
+          height: 100,
+          width: 100,
+          child: account.getAvatar(),
+        ),
+        const SizedBox(width: 32),
+        Text(
+          account.name,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserAndActionPanel(Account account, BuildContext context) {
+    return Wrap(
+      spacing: 32,
+      runSpacing: 16,
+      alignment: WrapAlignment.start,
+      children: [
+        _buildUserItem("Creator", account.creator, context),
+        _buildUserItem("Updater", account.updator, context),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text("Actions", style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(width: 16),
+                Column(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        context.push('/account/${account.id}/edit');
+                      },
+                      icon: const Icon(Icons.edit),
+                      label: const Text('Edit'),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Delete Account'),
+                            content: const Text('Are you sure you want to delete this account?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  await AccountService().deleteAccount(account.id);
+                                  if (context.mounted) {
+                                    context.go('/');
+                                  }
+                                },
+                                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.delete),
+                      label: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildDetailItem(String label, String value, bool copyable, bool link, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

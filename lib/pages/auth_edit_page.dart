@@ -20,7 +20,7 @@ class _AuthEditPageState extends State<AuthEditPage> {
   String _selectedAuthType = 'none';
   String _selectedTotpAlgorithm = 'SHA1';
   final _totpKeyController = TextEditingController();
-  final _totpDigitsController = TextEditingController();
+  final _totpDigitsController = TextEditingController(text: '6');
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
@@ -40,7 +40,9 @@ class _AuthEditPageState extends State<AuthEditPage> {
     } else {
       setState(() {
       _isLoading = false;
-      _selectedAuthType = 'none';});
+      _selectedAuthType = 'none';
+      
+      });
     }
   }
 
@@ -55,17 +57,16 @@ class _AuthEditPageState extends State<AuthEditPage> {
       
       if (response.statusCode == 200) {
         final j = jsonDecode(response.body);
+        _hasExistingAuth = true;
         setState(() {
           _selectedAuthType = j['type'];
           final data = j['data'];
           if (_selectedAuthType == 'email') {
-            _hasExistingAuth = true;
             _emailController.text = data['email'];
             _nameController.text = data['name'];
             _commentController.text = data['comment'];
             _qqController.text = data['qq'];
           } else if (_selectedAuthType == 'phone') {
-            _hasExistingAuth = true;
             _nameController.text = data['name'];
             _commentController.text = data['comment'];
             _qqController.text = data['qq'];
@@ -142,7 +143,7 @@ class _AuthEditPageState extends State<AuthEditPage> {
 
     if (_selectedAuthType == 'totp') {
       authData['algorithm'] = _selectedTotpAlgorithm;
-      authData['key'] = _totpKeyController.text;
+      authData['secret'] = _totpKeyController.text;
       authData['digits'] = int.parse(_totpDigitsController.text);
     } else if (_selectedAuthType == 'email') {
       authData['email'] = _emailController.text;
@@ -195,50 +196,51 @@ class _AuthEditPageState extends State<AuthEditPage> {
   Widget _buildAuthForm() {
     switch (_selectedAuthType) {
       case 'totp':
-        return Column(
-          children: [
-            DropdownButtonFormField<String>(
-              value: _selectedTotpAlgorithm,
-              decoration: const InputDecoration(labelText: 'TOTP Algorithm'),
-              items: _totpAlgorithms.map((algorithm) {
-                return DropdownMenuItem(
-                  value: algorithm,
-                  child: Text(algorithm.toUpperCase()),
-                );
-              }).toList(),
-              onChanged: _hasExistingAuth ? null : (value) {
-                setState(() => _selectedTotpAlgorithm = value!);
-              },
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _totpKeyController,
-              decoration: const InputDecoration(
-                labelText: 'TOTP Key',
-                hintText: 'Enter your TOTP secret key',
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              DropdownButtonFormField<String>(
+                value: _selectedTotpAlgorithm,
+                decoration: const InputDecoration(labelText: 'TOTP Algorithm'),
+                items: _totpAlgorithms.map((algorithm) {
+                  return DropdownMenuItem(
+                    value: algorithm,
+                    child: Text(algorithm.toUpperCase()),
+                  );
+                }).toList(),
+                onChanged: _hasExistingAuth ? null : (value) {
+                  setState(() => _selectedTotpAlgorithm = value!);
+                },
               ),
-              enabled: !_hasExistingAuth,
-              validator: (value) => 
-                  value?.isEmpty == true ? 'TOTP key is required' : null,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _totpDigitsController,
-              decoration: const InputDecoration(
-                labelText: 'TOTP Digits',
-                hintText: 'Enter the number of digits in the TOTP code',
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _totpKeyController,
+                decoration: const InputDecoration(
+                  labelText: 'TOTP Key',
+                  hintText: 'Enter your TOTP secret key',
+                ),
+                enabled: !_hasExistingAuth,
+                validator: (value) => 
+                    value?.isEmpty == true ? 'TOTP key is required' : null,
               ),
-              initialValue: '6',
-              enabled: !_hasExistingAuth,
-              validator: (value) {
-                if (value?.isEmpty ?? true) return 'TOTP digits is required';
-                if (!RegExp(r'^\d{1,2}$').hasMatch(value!)) {
-                  return 'Enter a valid number of digits';
-                }
-                return null;
-              },
-            ),
-          ],
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _totpDigitsController,
+                decoration: const InputDecoration(
+                  labelText: 'TOTP Digits',
+                  hintText: 'Enter the number of digits in the TOTP code',
+                ),
+                enabled: !_hasExistingAuth,
+                validator: (value) {
+                  if (value?.isEmpty ?? true) return 'TOTP digits is required';
+                  if (!RegExp(r'^\d{1,2}$').hasMatch(value!)) {
+                    return 'Enter a valid number of digits';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
         );
       case 'email':
         return Column(
