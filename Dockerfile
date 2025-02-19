@@ -9,7 +9,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install wget curl git unz
 ENV PATH="$PATH:/root/flutter/bin"
 
 COPY . .
-RUN flutter doctor -v && flutter pub get && flutter build web --no-tree-shake-icons
+RUN flutter pub get && dart run flutter_iconpicker:generate_packs --packs material && flutter build web --no-tree-shake-icons
 
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
