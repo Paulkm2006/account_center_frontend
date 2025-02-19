@@ -3,6 +3,7 @@ WORKDIR /app
 
 RUN apk update && apk add curl git unzip xz zip mesa-gl && \
     wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.29.0-stable.tar.xz && \
+	mkdir ~/flutter && \
 	tar xf flutter_linux_3.29.0-stable.tar.xz -C ~/flutter && \
 	rm flutter_linux_3.29.0-stable.tar.xz
 ENV PATH="$PATH:/root/flutter/bin"
