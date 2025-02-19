@@ -20,6 +20,7 @@ class _AuthEditPageState extends State<AuthEditPage> {
   String _selectedAuthType = 'none';
   String _selectedTotpAlgorithm = 'SHA1';
   final _totpKeyController = TextEditingController();
+  final _totpDigitsController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
@@ -69,7 +70,7 @@ class _AuthEditPageState extends State<AuthEditPage> {
             _commentController.text = data['comment'];
             _qqController.text = data['qq'];
             _phoneController.text = data['phone'] ?? '';
-          }
+          } 
         });
       }
       setState(() => _isLoading = false);
@@ -142,7 +143,7 @@ class _AuthEditPageState extends State<AuthEditPage> {
     if (_selectedAuthType == 'totp') {
       authData['algorithm'] = _selectedTotpAlgorithm;
       authData['key'] = _totpKeyController.text;
-      authData['digits'] = 6;
+      authData['digits'] = int.parse(_totpDigitsController.text);
     } else if (_selectedAuthType == 'email') {
       authData['email'] = _emailController.text;
       authData['name'] = _nameController.text;
@@ -219,6 +220,23 @@ class _AuthEditPageState extends State<AuthEditPage> {
               enabled: !_hasExistingAuth,
               validator: (value) => 
                   value?.isEmpty == true ? 'TOTP key is required' : null,
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _totpDigitsController,
+              decoration: const InputDecoration(
+                labelText: 'TOTP Digits',
+                hintText: 'Enter the number of digits in the TOTP code',
+              ),
+              initialValue: '6',
+              enabled: !_hasExistingAuth,
+              validator: (value) {
+                if (value?.isEmpty ?? true) return 'TOTP digits is required';
+                if (!RegExp(r'^\d{1,2}$').hasMatch(value!)) {
+                  return 'Enter a valid number of digits';
+                }
+                return null;
+              },
             ),
           ],
         );
