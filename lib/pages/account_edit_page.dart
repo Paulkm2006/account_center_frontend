@@ -137,6 +137,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     }
 
     setState(() => _isTestingImage = true);
+
     
     try {
       final response = await http.head(Uri.parse(url));
@@ -221,6 +222,11 @@ class _AccountEditPageState extends State<AccountEditPage> {
                         onChanged: (value) {
                           Future.delayed(const Duration(milliseconds: 500), () {
                             if (value == _avatarController.text) {
+                              if (value.contains('github')) {
+                                value = value.replaceAll(
+                                    'https://', 'https://gh-proxy.com/');
+                              }
+                              _avatarController.text = value;
                               _testImageUrl(value);
                             }
                           });
