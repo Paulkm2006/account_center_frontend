@@ -32,7 +32,7 @@ class AuthService {
     
     document.cookie = 'jwt=$token;'
         ' path=/;'
-        ' expires=${exp.toUtc()};'
+        ' expires=${expirationDate.toUtc()};'
         ' $secure'
         ' SameSite=Strict;'
         ' domain=${window.location.hostname};';
