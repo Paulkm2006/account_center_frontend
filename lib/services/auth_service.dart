@@ -26,13 +26,12 @@ class AuthService {
       return false;
     }
   }
-  void setJwtCookie(String token) {
-    final expirationDate = DateTime.now().add(const Duration(hours: 24));
+  void setJwtCookie(String token, DateTime exp) {
     final secure = window.location.protocol == 'https:' ? 'Secure;' : '';
     
     document.cookie = 'jwt=$token;'
         ' path=/;'
-        ' expires=${expirationDate.toUtc()};'
+        ' expires=${exp.toUtc()};'
         ' $secure'
         ' SameSite=Strict;'
         ' domain=${window.location.hostname};';
