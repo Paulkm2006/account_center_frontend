@@ -176,7 +176,7 @@ class AccountDetailPage extends StatelessWidget {
                     const SizedBox(height: 8),
                     ElevatedButton.icon(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
                       ),
                       onPressed: () {
                         showDialog(

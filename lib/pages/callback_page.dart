@@ -27,8 +27,9 @@ class _CallbackPageState extends State<CallbackPage> {
 
       if (response.statusCode == 200) {
         final token = jsonDecode(response.body)['token'];
-        final exp = jsonDecode(response.body)['exp'];
-        final expirationDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+        final expirationDate = DateTime.now().add(
+          const Duration(days: 7),
+        );
         AuthService().setJwtCookie(token, expirationDate);
         if (mounted) {
           context.go('/');
