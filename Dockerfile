@@ -8,6 +8,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install wget curl git unz
 	rm flutter_linux_3.29.0-stable.tar.xz
 ENV PATH="$PATH:/root/flutter/bin"
 
+
 COPY . .
 RUN flutter pub get && dart run flutter_iconpicker:generate_packs --packs material && flutter build web --no-tree-shake-icons
 

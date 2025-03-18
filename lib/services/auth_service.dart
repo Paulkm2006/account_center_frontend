@@ -27,7 +27,7 @@ class AuthService {
     }
   }
   void setJwtCookie(String token) {
-    final expirationDate = DateTime.now().add(const Duration(hours: 24));
+    final expirationDate = DateTime.now().add(const Duration(days: 7));
     final secure = window.location.protocol == 'https:' ? 'Secure;' : '';
     
     document.cookie = 'jwt=$token;'
